@@ -1,10 +1,11 @@
-import { loginSchema } from '$lib/schemas';
+import { loginSchema } from '$lib/zod-schemas';
 import { setError, superValidate } from 'sveltekit-superforms';
 import type { PageServerLoad, Actions } from './$types';
 import { zod } from 'sveltekit-superforms/adapters';
 import { fail, redirect } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
-import { db, users } from '$lib/server/db';
+import { db } from '$lib/server/db';
+import { users } from '$lib/server/schemas';
 import { Argon2id } from 'oslo/password';
 import { lucia } from '$lib/server/auth';
 

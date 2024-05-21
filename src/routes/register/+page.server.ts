@@ -1,10 +1,11 @@
 import { setError, superValidate } from 'sveltekit-superforms';
 import type { Actions, PageServerLoad } from './$types';
-import { registerSchema } from '$lib/schemas';
+import { registerSchema } from '$lib/zod-schemas';
 import { zod } from 'sveltekit-superforms/adapters';
 import { fail, redirect } from '@sveltejs/kit';
 import { generateId } from 'lucia';
-import { db, users } from '$lib/server/db';
+// import { db } from '$lib/server/db';
+import { users } from '$lib/server/schemas.js';
 import { lucia } from '$lib/server/auth';
 import { eq } from 'drizzle-orm';
 import { Argon2id } from 'oslo/password';
@@ -25,7 +26,7 @@ export const actions: Actions = {
 			});
 		}
 		// check if username is taken
-		const userExists = db
+		const userExists = event.locals.db
 			.select({ username: users.username })
 			.from(users)
 			.where(eq(users.username, form.data.username))
@@ -38,7 +39,7 @@ export const actions: Actions = {
 		const userId = generateId(15);
 		const hashedPassword = await new Argon2id().hash(form.data.password);
 
-		const { insertedId } = db
+		const { insertedId } = event.locals.db
 			.insert(users)
 			.values({ username: form.data.username, hashed_password: hashedPassword, id: userId })
 			.returning({ insertedId: users.id })
