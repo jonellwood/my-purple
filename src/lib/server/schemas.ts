@@ -49,3 +49,33 @@ export const postsRelations = relations(posts, ({ one }) => ({
 		references: [users.id]
 	})
 }));
+
+export type User = InferSelectModel<typeof users>;
+export type Post = InferSelectModel<typeof posts>;
+// export type Like = InferSelectModel<typeof likesTable>;
+// export type Comment = InferSelectModel<typeof commentsTable>;
+
+export type UserWithPosts = User & {
+	posts: Post[];
+};
+
+export type PostWithUser = Post & {
+	user: User;
+};
+
+// export type PostWithUserAndComments = PostWithUser & {
+// 	comments: Comment[];
+// };
+
+// export type CommentWithUser = Comment & {
+// 	user: User;
+// };
+// export type LikeWithUser = Like & {
+// 	user: User;
+// };
+
+// export type PostWithRelations = Post & {
+// 	user: User;
+// 	comments: CommentWithUser[];
+// 	likes: LikeWithUser[];
+// };
