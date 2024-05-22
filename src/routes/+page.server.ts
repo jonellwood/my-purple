@@ -10,15 +10,10 @@ import { generateId } from 'lucia';
 export const load: PageServerLoad = async (event) => {
 	const createPostForm = await superValidate(zod(createPostSchema));
 
-	// const posts = db.query.posts.findMany({
-	// 	with: {
-	// 		columns: {
-	// 			id: true,
-	// 			username: true
-	// 		}
-	// 	}
-	// });
-	const posts = 'I CANT LOAD MY POSTS 😢';
+	const posts = await db.query.posts.findMany({
+		orderBy: (posts, { desc }) => [desc(posts.createdAt)]
+	});
+
 	return {
 		posts,
 		createPostForm
