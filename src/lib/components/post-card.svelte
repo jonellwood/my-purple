@@ -9,6 +9,8 @@
 	import { buttonVariants } from './ui/button';
 	import { Description } from 'formsnap';
 	import Button from './ui/button/button.svelte';
+	import { sleep } from '$lib/utils';
+
 	type Props = {
 		post: PostWithUser;
 	};
@@ -16,6 +18,7 @@
 
 	let deleteDialogOpen = $state(false);
 	let editDialogOpen = $state(false);
+	let dropdownOpen = $state(false);
 </script>
 
 <Card.Root>
@@ -23,7 +26,7 @@
 		<Card.Title>
 			{post.title}
 		</Card.Title>
-		<DropdownMenu.Root>
+		<DropdownMenu.Root bind:open={dropdownOpen}>
 			<DropdownMenu.Trigger class={buttonVariants({ size: 'icon', variant: 'ghost' })}>
 				<MoreVertical class="size-4" />
 				<span class="sr-only"> Manage Posts </span>
@@ -33,7 +36,15 @@
 					<SquarePen class="size-4 mr-2" />
 					Edit
 				</DropdownMenu.Item>
-				<DropdownMenu.Item onclick={() => (deleteDialogOpen = true)}>
+				<DropdownMenu.Item
+					on:click={(e) => {
+						e.preventDefault();
+						dropdownOpen = false;
+						sleep(2).then(() => {
+							deleteDialogOpen = true;
+						});
+					}}
+				>
 					<Trash class="size-4 mr-2" />
 					Delete
 				</DropdownMenu.Item>
