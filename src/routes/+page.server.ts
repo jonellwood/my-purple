@@ -3,22 +3,22 @@ import { posts } from '$lib/server/schemas';
 import { fail, superValidate } from 'sveltekit-superforms';
 import { createPostSchema } from '$lib/zod-schemas';
 import { zod } from 'sveltekit-superforms/adapters';
-// import { db } from '$lib/server/db';
+import { db } from '$lib/server/db';
 import { redirect } from '@sveltejs/kit';
 import { generateId } from 'lucia';
 
 export const load: PageServerLoad = async (event) => {
 	const createPostForm = await superValidate(zod(createPostSchema));
 
-	const posts = event.locals.db.query.posts.findMany({
-		with: {
-			columns: {
-				id: true,
-				username: true
-			}
-		}
-	});
-
+	// const posts = db.query.posts.findMany({
+	// 	with: {
+	// 		columns: {
+	// 			id: true,
+	// 			username: true
+	// 		}
+	// 	}
+	// });
+	const posts = 'I CANT LOAD MY POSTS 😢';
 	return {
 		posts,
 		createPostForm

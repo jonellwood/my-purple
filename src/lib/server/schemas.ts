@@ -1,5 +1,5 @@
 import { relations } from 'drizzle-orm';
-import { text, integer, sqliteTable } from 'drizzle-orm/sqlite-core';
+import { text, integer, sqliteTable, SQLiteAsyncDialect } from 'drizzle-orm/sqlite-core';
 import { generateId } from 'lucia';
 
 export const users = sqliteTable('user', {
@@ -32,8 +32,8 @@ export const usersRelations = relations(users, ({ many }) => ({
 	posts: many(posts)
 }));
 
-export const postsRelations = relations(posts, ({ one }) => ({
-	users: one(users, {
+export const postsRelations = relations(posts, ({ one, many }) => ({
+	user: one(users, {
 		fields: [posts.userId],
 		references: [users.id]
 	})

@@ -14,11 +14,11 @@
 	const { form: formData, enhance, errors } = form;
 </script>
 
-<div class="flex flex-col space-y-2 text-center">
+<div class="flex flex-col space-y-2 text-center pt-2">
 	<h1 class="text-2xl font-semibold tracking-tight">Login to your account</h1>
 	<p class="text-sm text-muted-foreground">Start participating in the conversation.</p>
 </div>
-<form method="POST" use:enhance class="w-full space-y-4 p-20">
+<form method="POST" use:enhance class="w-full space-y-4 p-20 max-w-xl">
 	<Form.Field {form} name="username">
 		<Form.Control let:attrs>
 			<Form.Label>Username</Form.Label>

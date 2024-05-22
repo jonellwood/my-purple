@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { Button } from '$lib/components/ui/button';
+	import { Toaster } from '$lib/components/ui/sonner';
 	import '../app.css';
 
 	let { data } = $props();
@@ -8,6 +9,7 @@
 	$page;
 </script>
 
+<Toaster />
 <div class="flex h-24 w-full items-center border-b">
 	<div class="container flex items-center justify-between">
 		<div>
