@@ -7,18 +7,39 @@
 	import { Trash } from 'lucide-svelte';
 	import { SquarePen } from 'lucide-svelte';
 	import { buttonVariants } from './ui/button';
-	import { Description } from 'formsnap';
 	import Button from './ui/button/button.svelte';
 	import { sleep } from '$lib/utils';
+	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
+	import { deletePostSchema } from '$lib/zod-schemas';
+	import { zodClient } from 'sveltekit-superforms/adapters';
+	import { toast } from 'svelte-sonner';
 
 	type Props = {
 		post: PostWithUser;
+		form: SuperValidated<Infer<typeof deletePostSchema>>;
 	};
-	let { post } = $props<Props>();
+	let { post, form: theForm } = $props<Props>();
 
-	let deleteDialogOpen = $state(false);
-	let editDialogOpen = $state(false);
-	let dropdownOpen = $state(false);
+	const form = superForm(theForm, {
+		validators: zodClient(deletePostSchema),
+		onUpdated: ({ form: returnForm }) => {
+			if (!returnForm.valid) return toast.error('Error buying Shoes for a clown');
+			openStates.deleteDialogOpen = false;
+			toast.success('Post Deleted');
+		}
+	});
+
+	const { enhance } = form;
+
+	const openStates = $state({
+		deleteDialogOpen: false,
+		editDialogOpen: false,
+		dropdownOpen: false
+	});
+
+	// let deleteDialogOpen = $state(false);
+	// let editDialogOpen = $state(false);
+	// let dropdownOpen = $state(false);
 </script>
 
 <Card.Root>
@@ -26,7 +47,7 @@
 		<Card.Title>
 			{post.title}
 		</Card.Title>
-		<DropdownMenu.Root bind:open={dropdownOpen}>
+		<DropdownMenu.Root bind:open={openStates.dropdownOpen}>
 			<DropdownMenu.Trigger class={buttonVariants({ size: 'icon', variant: 'ghost' })}>
 				<MoreVertical class="size-4" />
 				<span class="sr-only"> Manage Posts </span>
@@ -39,9 +60,9 @@
 				<DropdownMenu.Item
 					on:click={(e) => {
 						e.preventDefault();
-						dropdownOpen = false;
+						openStates.dropdownOpen = false;
 						sleep(2).then(() => {
-							deleteDialogOpen = true;
+							openStates.deleteDialogOpen = true;
 						});
 					}}
 				>
@@ -59,15 +80,19 @@
 	</Card.Footer>
 </Card.Root>
 
-<AlertDialog.Root bind:open={deleteDialogOpen}>
+<AlertDialog.Root bind:open={openStates.deleteDialogOpen}>
 	<AlertDialog.Content>
 		<AlertDialog.Header>
 			<AlertDialog.Title>Delete Post</AlertDialog.Title>
 			<AlertDialog.Description>Are you sure about this? ... Sinner!</AlertDialog.Description>
 		</AlertDialog.Header>
 		<AlertDialog.Footer>
-			<Button variant="destructive">Yep</Button>
-			<Button variant="outline" onclick={() => (deleteDialogOpen = false)}>Nope</Button>
+			<form use:enhance method="POST" action="?/deletePost&id={post.id}">
+				<Button variant="destructive" type="submit">Yes, Delete It</Button>
+			</form>
+			<Button variant="outline" onclick={() => (openStates.deleteDialogOpen = false)}
+				>Nevermind</Button
+			>
 		</AlertDialog.Footer>
 	</AlertDialog.Content>
 </AlertDialog.Root>
