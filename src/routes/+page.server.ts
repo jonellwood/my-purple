@@ -1,16 +1,16 @@
-import type { Actions, PageServerLoad } from './$types';
-import { posts } from '$lib/server/schemas';
-import { fail, setError, superValidate } from 'sveltekit-superforms';
-import { createPostSchema, deletePostSchema } from '$lib/zod-schemas';
-import { zod } from 'sveltekit-superforms/adapters';
 import { db } from '$lib/server/db';
-import { redirect } from '@sveltejs/kit';
+import { setError, superValidate } from 'sveltekit-superforms';
+import type { Actions, PageServerLoad } from './$types';
+import { zod } from 'sveltekit-superforms/adapters';
+import { createPostSchema, deletePostSchema } from '$lib/zod-schemas';
+import { fail, redirect } from '@sveltejs/kit';
+import { posts } from '$lib/server/schemas';
 import { generateId } from 'lucia';
 import { eq } from 'drizzle-orm';
 
 export const load: PageServerLoad = async () => {
 	const createPostForm = await superValidate(zod(createPostSchema));
-	const deletePostForm = superValidate(zod(deletePostSchema));
+	const deletePostForm = await superValidate(zod(deletePostSchema));
 
 	const posts = await db.query.posts.findMany({
 		orderBy: (posts, { desc }) => [desc(posts.createdAt)],
@@ -32,33 +32,28 @@ export const load: PageServerLoad = async () => {
 
 export const actions: Actions = {
 	createPost: async (event) => {
-		if (!event.locals.user) redirect(302, './login');
+		if (!event.locals.user) redirect(302, '/login');
 		const form = await superValidate(event, zod(createPostSchema));
 
 		if (!form.valid) {
 			return fail(400, { form });
 		}
+
 		const postId = generateId(15);
-		// create posts in db
-		await event.locals.db
-			.insert(posts)
-			.values({ id: postId, ...form.data, userId: event.locals.user.id });
+
+		// create post in db
+		await db.insert(posts).values({ id: postId, ...form.data, userId: event.locals.user.id });
 
 		return { form };
 	},
 	deletePost: async (event) => {
-		if (!event.locals.user) redirect(302, './login');
-
+		if (!event.locals.user) redirect(302, '/login');
 		const form = await superValidate(event.url, zod(deletePostSchema));
 
 		if (!form.valid) {
-			setError(form, '', 'bang form dot valid');
-			return {
-				deletePostForm: form
-			};
+			return setError(form, '', 'Error deleting post');
 		}
 
-		// does user own this post
 		const post = await db.query.posts.findFirst({
 			where: eq(posts.id, form.data.id),
 			with: {
@@ -70,7 +65,7 @@ export const actions: Actions = {
 			}
 		});
 		if (!post || post.userId !== event.locals.user.id) {
-			return setError(form, '', 'Delete request DENIED says I');
+			return setError(form, '', 'Unable to delete post.');
 		}
 
 		await db.delete(posts).where(eq(posts.id, form.data.id));

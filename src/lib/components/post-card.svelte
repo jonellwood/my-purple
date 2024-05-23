@@ -2,30 +2,31 @@
 	import * as Card from '$lib/components/ui/card';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog';
 	import type { PostWithUser } from '$lib/server/schemas';
+	import { Button } from '$lib/components/ui/button';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-	import { MoreVertical } from 'lucide-svelte';
-	import { Trash } from 'lucide-svelte';
-	import { SquarePen } from 'lucide-svelte';
+	import Skull from 'lucide-svelte/icons/skull';
+	import Trash from 'lucide-svelte/icons/trash';
+	import SquarePen from 'lucide-svelte/icons/square-pen';
 	import { buttonVariants } from './ui/button';
-	import Button from './ui/button/button.svelte';
-	import { sleep } from '$lib/utils';
 	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
 	import { deletePostSchema } from '$lib/zod-schemas';
 	import { zodClient } from 'sveltekit-superforms/adapters';
+	import { sleep } from '$lib/utils';
 	import { toast } from 'svelte-sonner';
 
 	type Props = {
 		post: PostWithUser;
 		form: SuperValidated<Infer<typeof deletePostSchema>>;
 	};
+
 	let { post, form: theForm } = $props<Props>();
 
 	const form = superForm(theForm, {
 		validators: zodClient(deletePostSchema),
 		onUpdated: ({ form: returnForm }) => {
-			if (!returnForm.valid) return toast.error('Error buying Shoes for a clown');
+			if (!returnForm.valid) return toast.error('Error deleting your post!');
 			openStates.deleteDialogOpen = false;
-			toast.success('Post Deleted');
+			toast.success('Post deleted!');
 		}
 	});
 
@@ -36,10 +37,6 @@
 		editDialogOpen: false,
 		dropdownOpen: false
 	});
-
-	// let deleteDialogOpen = $state(false);
-	// let editDialogOpen = $state(false);
-	// let dropdownOpen = $state(false);
 </script>
 
 <Card.Root>
@@ -49,12 +46,12 @@
 		</Card.Title>
 		<DropdownMenu.Root bind:open={openStates.dropdownOpen}>
 			<DropdownMenu.Trigger class={buttonVariants({ size: 'icon', variant: 'ghost' })}>
-				<MoreVertical class="size-4" />
-				<span class="sr-only"> Manage Posts </span>
+				<Skull class="size-4" />
+				<span class="sr-only">Post options</span>
 			</DropdownMenu.Trigger>
 			<DropdownMenu.Content>
 				<DropdownMenu.Item>
-					<SquarePen class="size-4 mr-2" />
+					<SquarePen class="mr-2 size-4" />
 					Edit
 				</DropdownMenu.Item>
 				<DropdownMenu.Item
@@ -66,7 +63,7 @@
 						});
 					}}
 				>
-					<Trash class="size-4 mr-2" />
+					<Trash class="mr-2 size-4" />
 					Delete
 				</DropdownMenu.Item>
 			</DropdownMenu.Content>
@@ -84,14 +81,16 @@
 	<AlertDialog.Content>
 		<AlertDialog.Header>
 			<AlertDialog.Title>Delete Post</AlertDialog.Title>
-			<AlertDialog.Description>Are you sure about this? ... Sinner!</AlertDialog.Description>
+			<AlertDialog.Description>Are you sure you want to delete this post?</AlertDialog.Description>
 		</AlertDialog.Header>
 		<AlertDialog.Footer>
 			<form use:enhance method="POST" action="?/deletePost&id={post.id}">
-				<Button variant="destructive" type="submit">Yes, Delete It</Button>
+				<Button class={buttonVariants({ variant: 'destructive' })} type="submit">Yep, do it.</Button
+				>
 			</form>
-			<Button variant="outline" onclick={() => (openStates.deleteDialogOpen = false)}
-				>Nevermind</Button
+			<AlertDialog.Cancel
+				class={buttonVariants({ variant: 'outline' })}
+				onclick={() => (openStates.deleteDialogOpen = false)}>Never mind.</AlertDialog.Cancel
 			>
 		</AlertDialog.Footer>
 	</AlertDialog.Content>

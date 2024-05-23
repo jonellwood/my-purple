@@ -1,5 +1,5 @@
 import { relations, sql, type InferSelectModel } from 'drizzle-orm';
-import { text, integer, sqliteTable, SQLiteAsyncDialect } from 'drizzle-orm/sqlite-core';
+import { text, integer, sqliteTable } from 'drizzle-orm/sqlite-core';
 import { generateId } from 'lucia';
 
 const timestamps = {
@@ -33,7 +33,7 @@ export const posts = sqliteTable('post', {
 		.$defaultFn(() => generateId(15)),
 	userId: text('user_id')
 		.notNull()
-		.references(() => users.id, { onDelete: 'cascade' }),
+		.references(() => users.id),
 	title: text('title').notNull(),
 	content: text('content').notNull(),
 	...timestamps
@@ -52,30 +52,11 @@ export const postsRelations = relations(posts, ({ one }) => ({
 
 export type User = InferSelectModel<typeof users>;
 export type Post = InferSelectModel<typeof posts>;
-// export type Like = InferSelectModel<typeof likesTable>;
-// export type Comment = InferSelectModel<typeof commentsTable>;
 
 export type UserWithPosts = User & {
 	posts: Post[];
 };
 
 export type PostWithUser = Post & {
-	user: User;
+	user: Pick<User, 'username'>;
 };
-
-// export type PostWithUserAndComments = PostWithUser & {
-// 	comments: Comment[];
-// };
-
-// export type CommentWithUser = Comment & {
-// 	user: User;
-// };
-// export type LikeWithUser = Like & {
-// 	user: User;
-// };
-
-// export type PostWithRelations = Post & {
-// 	user: User;
-// 	comments: CommentWithUser[];
-// 	likes: LikeWithUser[];
-// };
