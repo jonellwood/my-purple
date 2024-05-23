@@ -55,7 +55,7 @@
 					<span class="sr-only">Post options</span>
 				</DropdownMenu.Trigger>
 				<DropdownMenu.Content>
-					<DropdownMenu.Item>
+					<DropdownMenu.Item href="/posts/{post.id}/edit">
 						<SquarePen class="mr-2 size-4" />
 						Edit
 					</DropdownMenu.Item>

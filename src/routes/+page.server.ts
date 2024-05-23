@@ -7,7 +7,7 @@ import { fail, redirect } from '@sveltejs/kit';
 import { posts } from '$lib/server/schemas';
 import { generateId } from 'lucia';
 import { eq } from 'drizzle-orm';
-import { isUserPostOwner } from '$lib/server/helpers';
+import { getPostById } from '$lib/server/helpers';
 
 export const load: PageServerLoad = async () => {
 	const createPostForm = await superValidate(zod(createPostSchema));
@@ -58,27 +58,11 @@ export const actions: Actions = {
 			return setError(form, '', 'Error deleting post');
 		}
 
-		if (!isUserPostOwner(form.data.id, event.locals.user.id)) {
+		if (!getPostById(form.data.id, event.locals.user.id)) {
 			return setError(form, '', "Clown shoes my man. It's clown shoes");
 		}
 
 		await db.delete(posts).where(eq(posts.id, form.data.id));
-
-		return {
-			form
-		};
-	},
-	updatePost: async (event) => {
-		if (!event.locals.user) redirect(302, '/login');
-		const form = await superValidate(event.url, zod(updatePostSchema));
-
-		if (!form.valid) {
-			return setError(form, '', 'Error tying your clown shoes');
-		}
-		if (!isUserPostOwner(form.data.id, event.locals.user.id)) {
-			return setError(form, '', "Clown shoes my man. It's clown shoes");
-		}
-		await db.update(posts).where(eq(posts.id, form.data.id));
 
 		return {
 			form

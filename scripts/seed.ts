@@ -24,8 +24,8 @@ async function createPosts(userId: string) {
 	for (let i = 0; i < 5; i++) {
 		// console.log('Creating post #', i);
 		await db.insert(posts).values({
-			title: faker.word.words(3),
-			content: faker.company.catchPhrase(),
+			title: faker.commerce.productAdjective(),
+			content: faker.company.buzzPhrase(),
 			userId
 		});
 	}
