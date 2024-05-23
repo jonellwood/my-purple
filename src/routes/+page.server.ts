@@ -2,15 +2,17 @@ import { db } from '$lib/server/db';
 import { setError, superValidate } from 'sveltekit-superforms';
 import type { Actions, PageServerLoad } from './$types';
 import { zod } from 'sveltekit-superforms/adapters';
-import { createPostSchema, deletePostSchema } from '$lib/zod-schemas';
+import { createPostSchema, deletePostSchema, updatePostSchema } from '$lib/zod-schemas';
 import { fail, redirect } from '@sveltejs/kit';
 import { posts } from '$lib/server/schemas';
 import { generateId } from 'lucia';
 import { eq } from 'drizzle-orm';
+import { isUserPostOwner } from '$lib/server/helpers';
 
 export const load: PageServerLoad = async () => {
 	const createPostForm = await superValidate(zod(createPostSchema));
 	const deletePostForm = await superValidate(zod(deletePostSchema));
+	const updatePostForm = await superValidate(zod(updatePostSchema));
 
 	const posts = await db.query.posts.findMany({
 		orderBy: (posts, { desc }) => [desc(posts.createdAt)],
@@ -26,7 +28,9 @@ export const load: PageServerLoad = async () => {
 	return {
 		posts,
 		createPostForm,
-		deletePostForm
+		deletePostForm,
+		updatePostForm
+		// updatePostSchema
 	};
 };
 
@@ -54,21 +58,27 @@ export const actions: Actions = {
 			return setError(form, '', 'Error deleting post');
 		}
 
-		const post = await db.query.posts.findFirst({
-			where: eq(posts.id, form.data.id),
-			with: {
-				user: {
-					columns: {
-						id: true
-					}
-				}
-			}
-		});
-		if (!post || post.userId !== event.locals.user.id) {
-			return setError(form, '', 'Unable to delete post.');
+		if (!isUserPostOwner(form.data.id, event.locals.user.id)) {
+			return setError(form, '', "Clown shoes my man. It's clown shoes");
 		}
 
 		await db.delete(posts).where(eq(posts.id, form.data.id));
+
+		return {
+			form
+		};
+	},
+	updatePost: async (event) => {
+		if (!event.locals.user) redirect(302, '/login');
+		const form = await superValidate(event.url, zod(updatePostSchema));
+
+		if (!form.valid) {
+			return setError(form, '', 'Error tying your clown shoes');
+		}
+		if (!isUserPostOwner(form.data.id, event.locals.user.id)) {
+			return setError(form, '', "Clown shoes my man. It's clown shoes");
+		}
+		await db.update(posts).where(eq(posts.id, form.data.id));
 
 		return {
 			form

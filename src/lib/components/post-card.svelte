@@ -2,6 +2,7 @@
 	import * as Card from '$lib/components/ui/card';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog';
 	import type { PostWithUser } from '$lib/server/schemas';
+	import { UpdatePostDialog } from '$lib/components';
 	import { Button } from '$lib/components/ui/button';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import Skull from 'lucide-svelte/icons/skull';
@@ -100,3 +101,5 @@
 		</AlertDialog.Footer>
 	</AlertDialog.Content>
 </AlertDialog.Root>
+
+<!-- <UpdatePostDialog /> ON HOLD FOR NOW-->

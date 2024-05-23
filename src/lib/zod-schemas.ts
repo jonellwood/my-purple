@@ -30,3 +30,15 @@ export const createPostSchema = z.object({
 export const deletePostSchema = z.object({
 	id: z.string()
 });
+
+export const updatePostSchema = z.object({
+	id: z.string(),
+	title: z
+		.string()
+		.min(3, "Title must be 3 characters at least! C'mon!!")
+		.max(64, 'Title can not be more than 64 characters - save it for your content cowboy'),
+	content: z
+		.string()
+		.min(3, 'You have to have more than 3 characters worth or wisdom to spout out, right?')
+		.max(1024, 'Be more concise - less than 1024 characters in fact')
+});
