@@ -28,22 +28,16 @@
 	let { post, form: theForm, updatePostForm } = $props<Props>();
 
 	const deleteOpen = ref(false);
-	const editOpen = ref(false);
 	const dropdownOpen = ref(false);
 	const updateOpen = ref(false);
-
-	// this is just so my ap doesnt crash out ... till I figure out what i did wront with ref
-	// let deleteOpen = $state(false);
-	// let dropdownOpen = $state(false);
-	// let updateOpen = $state(false);
+	const commentOpen = ref(false);
 
 	const form = superForm(theForm, {
 		validators: zodClient(deletePostSchema),
 		onUpdated: ({ form: returnForm }) => {
-			if (!returnForm.valid) return toast.error("Error deleting your post!");
 			deleteOpen.value = false;
-			toast.success("Post deleted!");
 		},
+		id: `deletedPostForm-${post.id}`,
 	});
 
 	const { enhance } = form;
@@ -96,8 +90,21 @@
 	<Card.Content>
 		{post.content}
 	</Card.Content>
-	<Card.Footer>
-		By: {post.user.username}
+	<Card.Footer class="flex flex-col items-start gap-4">
+		<div class="flex w-full items-center justify-between">
+			<div>
+				By: {post.user.username}
+			</div>
+			<div>
+				{post.createdAt}
+			</div>
+		</div>
+		<div class="flex items-center gap-4">
+			<Button size="sm">Add Comment</Button>
+		</div>
+		{#if commentOpen.value}
+			<!-- Comment Form here -->
+		{/if}
 	</Card.Footer>
 </Card.Root>
 

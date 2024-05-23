@@ -22,6 +22,20 @@ export const load: PageServerLoad = async () => {
 					username: true,
 				},
 			},
+			comments: {
+				columns: {
+					content: true,
+					id: true,
+				},
+				with: {
+					user: {
+						columns: {
+							username: true,
+							id: true,
+						},
+					},
+				},
+			},
 		},
 	});
 
@@ -85,8 +99,3 @@ export const actions: Actions = {
 		return { form };
 	},
 };
-
-// await db
-// 	.update(posts)
-// 	.set({ title: form.data.title, content: form.data.content })
-// 	.where(eq(posts.id, postId));
