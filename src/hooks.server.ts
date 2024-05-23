@@ -1,7 +1,7 @@
 // src/hooks.server.ts
-import { lucia } from '$lib/server/auth';
-import type { Handle } from '@sveltejs/kit';
-import { db } from '$lib/server/db';
+import { lucia } from "$lib/server/auth";
+import type { Handle } from "@sveltejs/kit";
+import { db } from "$lib/server/db";
 
 export const handle: Handle = async ({ event, resolve }) => {
 	event.locals.db = db;
@@ -17,15 +17,15 @@ export const handle: Handle = async ({ event, resolve }) => {
 		const sessionCookie = lucia.createSessionCookie(session.id);
 
 		event.cookies.set(sessionCookie.name, sessionCookie.value, {
-			path: '.',
-			...sessionCookie.attributes
+			path: ".",
+			...sessionCookie.attributes,
 		});
 	}
 	if (!session) {
 		const sessionCookie = lucia.createBlankSessionCookie();
 		event.cookies.set(sessionCookie.name, sessionCookie.value, {
-			path: '.',
-			...sessionCookie.attributes
+			path: ".",
+			...sessionCookie.attributes,
 		});
 	}
 	event.locals.user = user;

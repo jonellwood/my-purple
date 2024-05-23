@@ -1,22 +1,22 @@
-import { Lucia } from 'lucia';
-import { adapter } from './db.js';
-import { dev } from '$app/environment';
+import { Lucia } from "lucia";
+import { adapter } from "./db.js";
+import { dev } from "$app/environment";
 
 export const lucia = new Lucia(adapter, {
 	sessionCookie: {
 		attributes: {
 			// set to true with using HTTPS
-			secure: !dev
-		}
+			secure: !dev,
+		},
 	},
 	getUserAttributes: (attributes) => {
 		return {
-			username: attributes.username
+			username: attributes.username,
 		};
-	}
+	},
 });
 
-declare module 'lucia' {
+declare module "lucia" {
 	interface Register {
 		Lucia: typeof lucia;
 		DatabaseUserAttributes: DatabaseUserAttributes;

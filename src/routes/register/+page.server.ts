@@ -1,19 +1,19 @@
-import { setError, superValidate } from 'sveltekit-superforms';
-import type { Actions, PageServerLoad } from './$types';
-import { registerSchema } from '$lib/zod-schemas';
-import { zod } from 'sveltekit-superforms/adapters';
-import { fail, redirect } from '@sveltejs/kit';
-import { generateId } from 'lucia';
+import { setError, superValidate } from "sveltekit-superforms";
+import type { Actions, PageServerLoad } from "./$types";
+import { registerSchema } from "$lib/zod-schemas";
+import { zod } from "sveltekit-superforms/adapters";
+import { fail, redirect } from "@sveltejs/kit";
+import { generateId } from "lucia";
 // import { db } from '$lib/server/db';
-import { users } from '$lib/server/schemas.js';
-import { lucia } from '$lib/server/auth';
-import { eq } from 'drizzle-orm';
-import { Argon2id } from 'oslo/password';
+import { users } from "$lib/server/schemas.js";
+import { lucia } from "$lib/server/auth";
+import { eq } from "drizzle-orm";
+import { Argon2id } from "oslo/password";
 
 export const load: PageServerLoad = async (event) => {
-	if (event.locals.user) redirect(302, '/');
+	if (event.locals.user) redirect(302, "/");
 	return {
-		form: await superValidate(zod(registerSchema))
+		form: await superValidate(zod(registerSchema)),
 	};
 };
 
@@ -22,7 +22,7 @@ export const actions: Actions = {
 		const form = await superValidate(event, zod(registerSchema));
 		if (!form.valid) {
 			return fail(400, {
-				form
+				form,
 			});
 		}
 		// check if username is taken
@@ -33,7 +33,7 @@ export const actions: Actions = {
 			.get();
 
 		if (userExists) {
-			return setError(form, 'username', 'Username is not available');
+			return setError(form, "username", "Username is not available");
 		}
 
 		const userId = generateId(15);
@@ -48,10 +48,10 @@ export const actions: Actions = {
 		const session = await lucia.createSession(insertedId, {});
 		const sessionCookie = lucia.createSessionCookie(session.id);
 		event.cookies.set(sessionCookie.name, sessionCookie.value, {
-			path: '.',
-			...sessionCookie.attributes
+			path: ".",
+			...sessionCookie.attributes,
 		});
 
-		redirect(302, './login');
-	}
+		redirect(302, "./login");
+	},
 };
