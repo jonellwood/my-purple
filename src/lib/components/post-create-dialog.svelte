@@ -8,6 +8,7 @@
 	import { Input } from "$lib/components/ui/input";
 	import { Textarea } from "$lib/components/ui/textarea";
 	import { toast } from "svelte-sonner";
+	// import type { PostState } from "./post-card.svelte";
 
 	type Props = {
 		form: SuperValidated<Infer<typeof createPostSchema>>;

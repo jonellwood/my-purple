@@ -42,3 +42,7 @@ export const updatePostSchema = z.object({
 		.min(3, "You have to have more than 3 characters worth or wisdom to spout out, right?")
 		.max(1024, "Be more concise - less than 1024 characters in fact"),
 });
+
+export const createPostCommentSchema = z.object({
+	content: z.string().min(3).max(512),
+});
