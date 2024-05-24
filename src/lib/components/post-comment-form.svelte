@@ -5,9 +5,10 @@
 	import * as Form from "$lib/components/ui/form";
 	import Textarea from "./ui/textarea/textarea.svelte";
 	import { getPostState } from "$lib/state.svelte";
+	import { page } from "$app/stores";
 
 	const data = getPostState();
-	console.log(data);
+	// console.log(data);
 
 	const form = superForm(data.createCommentForm, {
 		id: `post-comment-form-${data.post.id}`,
@@ -18,6 +19,8 @@
 	});
 
 	const { form: formData, enhance } = form;
+	// eslint-disable-line svelte/valid-compile
+	$page;
 </script>
 
 {#if data.commentOpen}
@@ -29,6 +32,11 @@
 			</Form.Control>
 			<Form.FieldErrors />
 		</Form.Field>
-		<Form.Button>Add your two 🪙</Form.Button>
+		<Form.Button>Add your two ￠</Form.Button>
+		<Form.Button
+			on:click={() => {
+				data.commentOpen = false;
+			}}>Forget It</Form.Button
+		>
 	</form>
 {/if}

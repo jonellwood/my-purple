@@ -7,7 +7,7 @@
 	import Trash from "lucide-svelte/icons/trash";
 	import SquarePen from "lucide-svelte/icons/square-pen";
 	import { buttonVariants } from "./ui/button";
-	import { type SuperValidated, type Infer } from "sveltekit-superforms";
+	import SuperDebug, { type SuperValidated, type Infer } from "sveltekit-superforms";
 	import { deletePostSchema, createPostCommentSchema, updatePostSchema } from "$lib/zod-schemas";
 	import { sleep } from "$lib/utils";
 	import { page } from "$app/stores";
@@ -27,20 +27,11 @@
 
 	const data = setPostState({ post, deletePostForm, updatePostForm, createCommentForm });
 
-	// const data = setPostState({
-	// 	post,
-	// 	deletePostForm,
-	// 	updatePostForm,
-	// 	createCommentForm,
-	// 	deleteOpen: false,
-	// 	dropdownOpen: false,
-	// 	updateOpen: false,
-	// 	commentOpen: false,
-	// });
-
 	// eslint-disable-next-line svelte/valid-compile
 	$page;
 </script>
+
+<SuperDebug data={post} />
 
 <Card.Root>
 	<Card.Header class="flex-row items-center justify-between">
@@ -95,11 +86,14 @@
 				{post.createdAt}
 			</div>
 		</div>
-		<div class="flex items-center gap-4">
-			<Button size="sm">Comment</Button>
-		</div>
-		<PostCommentForm />
+		{#if $page.data.user && $page.data.user.id !== post.userId}
+			<div class="flex items-center gap-4">
+				<Button size="sm" on:click={() => (data.commentOpen = true)}>Comment</Button>
+			</div>
+			<PostCommentForm />
+		{/if}
 	</Card.Footer>
 </Card.Root>
+
 <PostUpdateDialog />
 <PostDeleteDialog />
