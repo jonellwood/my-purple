@@ -111,10 +111,10 @@ export const actions: Actions = {
 		if (!form.valid) return fail(400, { form });
 
 		const postId = event.url.searchParams.get("postId");
-		if (!postId) error(400, "Invalid Post");
+		if (!postId) error(400, "Eat my shorts");
 
-		const post = await getPostById(postId, event.locals.user.id);
-		if (!post) error(400, "Invalid Post");
+		// const post = await getPostById(postId, event.locals.user.id);
+		// if (!post) error(400, "Shut the fart up");
 		await db.insert(comments).values({ ...form.data, postId, userId: event.locals.user.id });
 
 		return {

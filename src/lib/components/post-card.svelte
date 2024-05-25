@@ -23,7 +23,7 @@
 		createCommentForm: SuperValidated<Infer<typeof createPostCommentSchema>>;
 	};
 
-	let { post, deletePostForm, updatePostForm, createCommentForm } = $props<Props>();
+	let { post, deletePostForm, updatePostForm, createCommentForm }: Props = $props();
 
 	const data = setPostState({ post, deletePostForm, updatePostForm, createCommentForm });
 
