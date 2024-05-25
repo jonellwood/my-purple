@@ -8,7 +8,7 @@
 </script>
 
 <Dialog.Root bind:open={data.updateOpen}>
-	<Dialog.Trigger class={buttonVariants()}>Update Post</Dialog.Trigger>
+	<!-- <Dialog.Trigger class={buttonVariants()}>Update Farts</Dialog.Trigger> -->
 	<Dialog.Content>
 		<Dialog.Header>
 			<Dialog.Title>Update Post</Dialog.Title>

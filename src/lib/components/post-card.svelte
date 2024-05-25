@@ -31,7 +31,7 @@
 	$page;
 </script>
 
-<SuperDebug data={post} />
+<!-- <SuperDebug data={post} /> -->
 
 <Card.Root>
 	<Card.Header class="flex-row items-center justify-between">
